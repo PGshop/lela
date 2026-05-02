@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>PG Work Platform | Earn Daily Commission</title>
+    <style>
+        /* styles unchanged from previous version - kept compact */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(145deg, #f0f7f3 0%, #e9f0ec 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 56px;
+            padding: 28px 20px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 20px -8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .header h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1f7a5a, #0f6f6f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 20px 24px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+            border: 1px solid #e2eef2;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:active { transform: scale(0.98); }
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(180deg, #2b9b72, #1d6e54);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .card:hover::after { opacity: 1; }
+        .card h3 { font-size: 1.45rem; color: #1f5a46; margin-bottom: 8px; }
+        .card p { color: #496f5d; margin-bottom: 12px; }
+        .badge {
+            display: inline-block;
+            background: #eef4f0;
+            color: #2b7a5c;
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .detail-view {
+            background: white;
+            border-radius: 40px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.12);
+            border: 1px solid #e2edf2;
+        }
+        .detail-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #166345;
+            border-left: 6px solid #2ab47d;
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+        .detail-meta {
+            color: #6e8f7c;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #e0ede6;
+            padding-bottom: 14px;
+            margin-bottom: 28px;
+        }
+        .detail-text { font-size: 1rem; line-height: 1.6; color: #1f3e31; }
+        .detail-text p { margin-bottom: 1rem; }
+        .detail-text ul, .detail-text ol { margin: 0.8rem 0 1rem 1.6rem; }
+        .contact-link {
+            display: inline-block;
+            background: #eef3f0;
+            padding: 8px 18px;
+            border-radius: 60px;
+            text-decoration: none;
+            color: #1f7757;
+            margin: 6px 8px 0 0;
+            border: 1px solid #caddd4;
+        }
+        .back-btn {
+            background: linear-gradient(135deg, #259f73, #157855);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 80px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 35px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .hidden { display: none; }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #92aa9e;
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid #dce8e2;
+        }
+        .salary-card {
+            background: #f9fdfb;
+            border-radius: 24px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            border: 1px solid #d4e2dc;
+        }
+        .salary-level { font-size: 1.3rem; font-weight: 700; color: #1a5d46; border-bottom: 2px solid #cde0da; display: inline-block; margin-bottom: 12px; }
+        .salary-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; }
+        .salary-item { display: flex; justify-content: space-between; }
+        .salary-label { font-weight: 600; color: #5a7b6b; }
+        .salary-value { font-weight: 700; color: #259f73; }
+        .upgrade-note { background: #eafaf3; border-left: 4px solid #2a946b; padding: 12px 16px; border-radius: 20px; margin: 1.2em 0; }
+        .guide-img {
+            max-width: 100%;
+            border-radius: 20px;
+            margin: 15px 0;
+            border: 1px solid #d4e2dc;
+        }
+        .go-top {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #259f73, #157855);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .go-top.show { opacity: 1; visibility: visible; }
+        @media (max-width: 550px) {
+            body { padding: 14px; }
+            .go-top { bottom: 80px; right: 16px; width: 44px; height: 44px; font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div id="homeContainer">
+        <div class="header">
+            <h1>📌 PG Platform</h1>
+            <p>Online jobs · Complete orders · Daily commission</p>
+        </div>
+        <div id="cardsArea" class="card-list"></div>
+        <footer>👇 Tap any card to read full guide</footer>
+    </div>
+    <div id="detailContainer" class="hidden">
+        <div class="detail-view">
+            <div id="detailContent"></div>
+            <button id="backHomeBtn" class="back-btn">← Back to Contents</button>
+        </div>
+        <footer>✅ Check each section for complete PG guide</footer>
+    </div>
+</div>
+<div id="goTopBtn" class="go-top">↑</div>
+
+<script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
+<script src="https://files.bpcontent.cloud/2026/04/28/09/20260428091555-NM6KZXHQ.js" defer></script>
+
+<script>
+    const goTopBtn = document.getElementById('goTopBtn');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) goTopBtn.classList.add('show');
+        else goTopBtn.classList.remove('show');
+    });
+    goTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    let savedScrollPosition = 0;
+
+    const ARTICLES = {
+        "deposit-earnings": {
+            title: "💰 Deposit, Earnings & Rules",
+            meta: "Levels, daily income, withdrawal limits & deposit refund",
+            content: `
+                <p><strong>Member Levels & Benefits</strong></p>
+                <div class="salary-grid">
+                    <div class="salary-card">
+                        <div class="salary-level">Level 1</div>
+                        <div class="salary-details">
+                            <div class="salary-item"><span class="salary-label">Deposit:</span><span class="salary-value">K240</span></div>
+                            <div class="salary-item"><span class="salary-label">Tasks/Day:</span><span class="salary-value">3</span></div>
+                            <div class="salary-item"><span class="salary-label">Daily Pay:</span><span class="salary-value">K3</span></div>
+                            <div class="salary-item"><span class="salary-label">Weekly Pay:</span><span class="salary-value">K21</span></div>
+                            <div class="salary-item"><span class="salary-label">Min.Withdrawal:</span><span class="salary-value">K14</span></div>
+                        </div>
+                    </div>
+                    <div class="salary-card">
+                        <div class="salary-level">Level 2</div>
+                        <div class="salary-details">
+                            <div class="salary-item"><span class="salary-label">Deposit:</span><span class="salary-value">K670</span></div>
+                            <div class="salary-item"><span class="salary-label">Tasks/Day:</span><span class="salary-value">6</span></div>
+                            <div class="salary-item"><span class="salary-label">Daily Pay:</span><span class="salary-value">K19.8</span></div>
+                            <div class="salary-item"><span class="salary-label">Weekly Pay:</span><span class="salary-value">K138.6</span></div>
+                            <div class="salary-item"><span class="salary-label">Min.Withdrawal:</span><span class="salary-value">K80</span></div>
+                        </div>
+                    </div>
+                    <div class="salary-card">
+                        <div class="salary-level">Level 3</div>
+                        <div class="salary-details">
+                            <div class="salary-item"><span class="salary-label">Deposit:</span><span class="salary-value">K1,700</span></div>
+                            <div class="salary-item"><span class="salary-label">Tasks/Day:</span><span class="salary-value">8</span></div>
+                            <div class="salary-item"><span class="salary-label">Daily Pay:</span><span class="salary-value">K52</span></div>
+                            <div class="salary-item"><span class="salary-label">Weekly Pay:</span><span class="salary-value">K364</span></div>
+                            <div class="salary-item"><span class="salary-label">Min.Withdrawal:</span><span class="salary-value">K250</span></div>
+                        </div>
+                    </div>
+                </div>
+                <p>💡 Maximum withdrawal: No limit.</p>
+                <div class="upgrade-note">
+                    <p>🔄 One-year contract, upgrade to extend, deposit fully refunded upon expiry or upgrade. Example: Level 1 → Level 2, K240 automatically refunded.</p>
+                </div>
+            `
+        },
+        "topup-steps": {
+            title: "🔁 Top‑Up Steps",
+            meta: "Contact manager → transfer → confirm",
+            content: `<ol><li>Contact manager for account details.</li><li>Transfer deposit, keep screenshot.</li><li>Send screenshot to manager → funds credited.</li><li>Supports BSP, Kina, USDT.</li></ol><p>⚠️ Confirm details with manager before any transfer.</p>`
+        },
+        "withdrawal-rules": {
+            title: "🏦 Withdrawal Rules",
+            meta: "Mon–Fri, arrive 2–96h",
+            content: `<ul><li>Request Mon–Fri only.</li><li>Funds arrive 2–96h.</li><li>Min: L1=14, L2=80, L3=250.</li><li>No max limit.</li></ul>`
+        },
+        "why-topup": {
+            title: "❓ Why Top Up?",
+            meta: "Deposit = working capital (refundable)",
+            content: `<p>Deposit is not a fee. It's working capital, fully refundable upon upgrade or contract end.</p>`
+        },
+        "order-problems": {
+            title: "⏳ Order Process",
+            meta: "Automatic completion & commission",
+            content: `<p>After order, countdown begins. After review, commission + principal credited.</p>`
+        },
+        "shipping-address": {
+            title: "📍 Shipping Address",
+            meta: "How to add your address (with guide image)",
+            content: `
+                <p><strong>Why?</strong> Simulates real shopping. Required for commission release.</p>
+                <p><strong>Steps:</strong> User Center → Shipping Address → Add Address → fill details → Save.</p>
+                <img class="guide-img" src="address_guide.jpg" alt="Address guide" onerror="this.style.display='none'">
+                <p><em>If image not visible, follow the steps above.</em></p>
+                <p>No physical items shipped.</p>
+            `
+        },
+        "how-to-complete-tasks": {
+            title: "✅ How to Complete Tasks",
+            meta: "Step by step",
+            content: `<p>Internship product purchase → complete order → wait review → commission credited.</p><ol><li>Login</li><li>Task Center → Select product</li><li>Buy → wait review</li><li>Commission + principal back</li></ol>`
+        },
+        "invite-friends": {
+            title: "👥 Why Invite Friends & Bonus System",
+            meta: "Grow together, earn together",
+            content: `
+                <p><strong>🎁 Invitation Rewards</strong></p>
+                <p>PG offers attractive invitation rewards (amounts may vary with promotions). When you invite a friend to become an official employee, you receive:</p>
+                <ul>
+                    <li><strong>Immediate cash bonus</strong> per successful invite</li>
+                    <li><strong>Permanent 0.05% rebate</strong> on every task they complete</li>
+                    <li><strong>Additional team-based incentives</strong> (see below)</li>
+                </ul>
+                <p>Your friend also gets a <strong>new member bonus</strong> upon registration!</p>
+
+                <p><strong>📈 Why Does PG Offer Bonuses? – The Bigger Picture</strong></p>
+                <p>The bonus system is not just about earning more money. It’s designed to help you grow faster, earn more, and build a stronger team. PG wants to establish a long-term, stable, and sustainable team, so we share profits with the hardest-working agents. Your efforts are rewarded.</p>
+                <p>💡 <strong>Clear growth targets</strong> – Bonuses give you milestones beyond basic commissions. Achieve certain performance levels, and you unlock extra rewards. It’s not only about the money – it’s a reflection of your growing capabilities. The company takes pride in your development.</p>
+                <p>⚡ <strong>Commission is the foundation, bonuses are the accelerator</strong> – They help you reach your financial goals faster.</p>
+                <p>💰 <strong>Passive income potential</strong> – Team rewards allow you to earn stable income even without actively promoting all the time. That’s a truly sustainable way to make money.</p>
+                <p>🤝 <strong>Win‑win partnership</strong> – PG believes that agents must earn first for the company to prosper. Bonuses encourage everyone to grow together and expand the market. Your success inspires others; your earnings, experience, and team influence create a ripple effect, bringing hope to more agents. This is not just about money – it’s about influence and helping the whole team rise.</p>
+                <p>📈 <strong>Skill improvement = higher pay</strong> – We want our employees to develop real abilities, which directly translates into better income and lays a solid foundation for your future.</p>
+                <p>🔁 <strong>Our philosophy</strong> – PG is not a platform that takes all profits. We believe that only when agents truly earn money can a team thrive long term. That’s why we offer tax subsidies, invitation rewards, team monthly salaries, subordinate rebates – all these systems allocate a larger share of company profits to those who are willing to contribute.</p>
+
+                <p><strong>🔗 How to Get Your Invitation Link</strong></p>
+                <p>Your personal invite link is in your account dashboard. Look for “Referral Team” or “Invite Code”. Follow the image below to locate it:</p>
+                <img class="guide-img" src="invite_link_guide.png" alt="Invite link guide" onerror="this.style.display='none'">
+                <p><em>If image not visible, ask your manager to help you find your invite code.</em></p>
+                <p>Share your link via WhatsApp, Telegram, or social media. When a friend registers using your link, rewards are automatically credited.</p>
+
+                <div class="upgrade-note">
+                    <p><strong>💡 Pro Tip:</strong> Every friend you bring builds your team’s tax advantage (up to 20% tax rebate on withdrawals). The larger your team, the more you benefit. Start inviting today – your success multiplies!</p>
+                </div>
+            `
+        },
+        "contact-manager": {
+            title: "📞 Contact Manager",
+            meta: "Telegram/Signal",
+            content: `<p><a href="https://t.me/lela303" class="contact-link">📱 Telegram</a> <a href="https://signal.me/#eu/tXcYkeU9bWBQIzut_QGqiNT_fwwvJ1O-lFEKcJADXGy5PB9T_S9MiritEYbdHymQ" class="contact-link">🔒 Signal</a><br>🕒 10am–10pm PNG time</p>`
+        },
+        "contact-support": {
+            title: "💡 Extra Earnings",
+            meta: "Invite bonuses, team salary",
+            content: `<ul><li>Invitation bonuses (flexible amounts)</li><li>Subordinate rebate 0.05%</li><li>Team monthly salary up to K6500</li><li>Tax subsidies based on team size</li></ul>`
+        },
+        "what-is-pg": {
+            title: "🌐 What Is PG?",
+            meta: "Legitimate company · 8+ years · 80% of fees to you",
+            content: `<p>PG Mall (PG Playground) is a legitimate technology service company, registered in Colorado, USA (No. 20181650293), operating since 2018. 80% of merchant fees go to employees. 200M+ global workers.</p>`
+        },
+        "why-png-commitment": {
+            title: "🇵🇬 Why PG in PNG?",
+            meta: "Long-term commitment",
+            content: `<p>We value PNG's hardworking people. We're here to stay, providing stable online jobs.</p>`
+        },
+        "why-pg-safe": {
+            title: "🔒 Why Is PG Safe?",
+            meta: "Legal, verifiable",
+            content: `<ul><li>US registered</li><li>8+ years</li><li>Deposit safe & refundable</li><li>200M employees</li></ul>`
+        },
+        "good-standing-cert": {
+            title: "📜 Official Good Standing Certificate",
+            meta: "Colorado Secretary of State",
+            content: `<p>✅ PG Playground is in Good Standing (Entity ID: 20181650293, formed 2018-08-20).</p><img class="guide-img" src="good_standing_cert.jpg" alt="Certificate" onerror="this.style.display='none'"><p>Verify with Confirmation No. <strong>17317234</strong> on <a href="https://www.colorados.gov/biz/CertificateSearchCriteria.do" target="_blank">Colorado.gov</a></p>`
+        }
+    };
+
+    const CARD_LIST = [
+        { id: "deposit-earnings", title: "💰 Deposit, Earnings & Rules", desc: "Levels, daily pay, withdrawal limits" },
+        { id: "topup-steps", title: "🔁 Top‑Up Steps", desc: "How to fund your account" },
+        { id: "withdrawal-rules", title: "🏦 Withdrawal Rules", desc: "Mon–Fri, 2–96h" },
+        { id: "why-topup", title: "❓ Why Top Up?", desc: "Deposit is refundable" },
+        { id: "order-problems", title: "⏳ Order Process", desc: "Automatic countdown" },
+        { id: "shipping-address", title: "📍 Shipping Address", desc: "With visual guide" },
+        { id: "how-to-complete-tasks", title: "✅ How to Complete Tasks", desc: "Internship products" },
+        { id: "invite-friends", title: "👥 Invite Friends & Bonuses", desc: "Why invite and how bonuses work" },
+        { id: "contact-manager", title: "📞 Contact Manager", desc: "Telegram/Signal" },
+        { id: "contact-support", title: "💡 Extra Earnings", desc: "Invite bonuses, team salary" },
+        { id: "what-is-pg", title: "🌐 What Is PG?", desc: "Legitimate, 8+ years" },
+        { id: "why-png-commitment", title: "🇵🇬 Why PG in PNG?", desc: "Our promise" },
+        { id: "why-pg-safe", title: "🔒 Why Is PG Safe?", desc: "Legal & secure" },
+        { id: "good-standing-cert", title: "📜 Good Standing Certificate", desc: "Official proof" }
+    ];
+
+    const homeContainer = document.getElementById('homeContainer');
+    const detailContainer = document.getElementById('detailContainer');
+    const cardsArea = document.getElementById('cardsArea');
+    const detailContentDiv = document.getElementById('detailContent');
+    const backBtn = document.getElementById('backHomeBtn');
+
+    function renderCards() {
+        cardsArea.innerHTML = '';
+        CARD_LIST.forEach(item => {
+            const article = ARTICLES[item.id];
+            const shortDesc = article?.meta || item.desc;
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `<h3>${item.title}</h3><p>${shortDesc}</p><div class="badge">📘 Tap to expand →</div>`;
+            card.addEventListener('click', () => showDetail(item.id));
+            cardsArea.appendChild(card);
+        });
+    }
+
+    function showDetail(articleId) {
+        savedScrollPosition = window.scrollY;
+        const article = ARTICLES[articleId];
+        if (!article) return;
+        detailContentDiv.innerHTML = `<div><div class="detail-title">${article.title}</div><div class="detail-meta">📌 ${article.meta}</div><div class="detail-text">${article.content}</div></div>`;
+        homeContainer.classList.add('hidden');
+        detailContainer.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        if (history.pushState) history.pushState({ view: 'detail', id: articleId }, '', `#${articleId}`);
+    }
+
+    function backToHome() {
+        detailContainer.classList.add('hidden');
+        homeContainer.classList.remove('hidden');
+        setTimeout(() => window.scrollTo({ top: savedScrollPosition, behavior: 'instant' }), 10);
+        if (location.hash) history.replaceState(null, '', ' ');
+    }
+
+    window.addEventListener('popstate', (e) => {
+        if (!detailContainer.classList.contains('hidden')) backToHome();
+        else if (location.hash && location.hash.length > 1) showDetail(location.hash.slice(1));
+    });
+    backBtn.addEventListener('click', backToHome);
+    renderCards();
+    if (location.hash && location.hash.length > 1) showDetail(location.hash.slice(1));
+</script>
+</body>
+</html>
